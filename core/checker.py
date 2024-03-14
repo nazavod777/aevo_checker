@@ -10,6 +10,7 @@ from web3.auto import w3
 
 from utils import loader, append_file
 
+Account.enable_unaudited_hdwallet_features()
 
 class Checker:
     def __init__(self,
