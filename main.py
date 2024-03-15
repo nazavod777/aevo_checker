@@ -9,6 +9,7 @@ from pyuseragents import random as random_useragent
 
 from core import start_checker
 from utils import loader
+from os import remove, listdir
 
 logger.remove()
 logger.add(stderr, format='<white>{time:HH:mm:ss}</white>'
@@ -50,22 +51,26 @@ if __name__ == '__main__':
     if not exists(path='result'):
         mkdir(path='result')
 
-    with open(file='data/accounts.txt',
-              mode='r',
-              encoding='utf-8-sig') as file:
-        accounts_list: list[str] = [row.strip() for row in file]
-
-    logger.success(f'Successfully Loaded {len(accounts_list)} Accounts')
-    threads: int = int(input('\nThreads: '))
+    threads: int = int(input('Threads: '))
     print()
 
-    try:
-        import uvloop
+    for current_file in listdir(path='data'):
+        with open(file=f'data/{current_file}',
+                  mode='r',
+                  encoding='utf-8-sig') as file:
+            accounts_list: list[str] = [row.strip() for row in file]
 
-        uvloop.run(main())
+        logger.success(f'Successfully Loaded {len(accounts_list)} Accounts')
 
-    except ModuleNotFoundError:
-        asyncio.run(main())
+        try:
+            import uvloop
+
+            uvloop.run(main())
+
+        except ModuleNotFoundError:
+            asyncio.run(main())
+
+        remove(path=f'data/{current_file}')
 
     logger.success(f'The Work Has Been Successfully Finished')
     input('\nPress Enter to Exit..')
